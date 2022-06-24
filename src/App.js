@@ -1,11 +1,13 @@
 import  { useEffect, useState } from 'react';
 import useDrivePicker from 'react-google-drive-picker'
 import axios from 'axios'
-
+import initSqlJs from "sql.js"
 
 function App() {
+  const [db, setDb] = useState(null);
   const [openPicker, authResponse] = useDrivePicker();  
   const [fileId, setFileId] = useState(null)  
+
   // const customViewsArray = [new google.picker.DocsView()]; // custom view
   const handleOpenPicker = () => {
     openPicker({
@@ -37,10 +39,17 @@ function App() {
     if(authResponse && fileId) {
       const getFile = async () => {
         const config =  {
-          headers: { Authorization: `Bearer ${authResponse.access_token}` }
+          headers: { Authorization: `Bearer ${authResponse.access_token}`,
+          'Content-Type': "application/x-sqlite3" },
+        responseType: 'arraybuffer'
         }
         const response = await axios.get(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, config)
-        console.log(response)
+        const uInt8Array = new Uint8Array(response.data)
+        const SQL = await initSqlJs({
+          locateFile: file => `https://sql.js.org/dist/${file}`
+        })
+        setDb(new SQL.Database(uInt8Array));
+        console.log(db.exec("SELECT balance FROM account WHERE id=1"))
       }
       console.log(authResponse, fileId)
       localStorage.setItem('auth', authResponse.access_token);
