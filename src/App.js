@@ -6,7 +6,9 @@ import initSqlJs from "sql.js"
 function App() {
   const [db, setDb] = useState(null);
   const [openPicker, authResponse] = useDrivePicker();  
-  const [fileId, setFileId] = useState(null)  
+  const [fileId, setFileId] = useState(null)
+  const [buckets, setBuckets] = useState(null)
+  const [bucketCats, setBucketCats] = useState(null)
 
   // const customViewsArray = [new google.picker.DocsView()]; // custom view
   const handleOpenPicker = () => {
@@ -49,7 +51,6 @@ function App() {
           locateFile: file => `https://sql.js.org/dist/${file}`
         })
         setDb(new SQL.Database(uInt8Array));
-        console.log(db.exec("SELECT balance FROM account WHERE id=1"))
       }
       console.log(authResponse, fileId)
       localStorage.setItem('auth', authResponse.access_token);
@@ -57,12 +58,60 @@ function App() {
     }
     console.log(fileId, authResponse)
   }, [authResponse, fileId])
+
+  useEffect(() => {
+    if(db) {
+      const newBuckets = db.exec("SELECT id, name, balance, group_id FROM bucket WHERE kicked = 0")[0].values
+        .reduce(
+          (entryMap, e) => entryMap.set(e[3], [...entryMap.get(e[3])||[], e]),
+          new Map()
+      )
+      setBuckets(newBuckets)
+      localStorage.setItem("buckets", JSON.stringify(Array.from(newBuckets)))
+      const newBucketCats = db.exec("SELECT id, name FROM bucket_group")[0]
+      setBucketCats(newBucketCats)
+      localStorage.setItem("bucketCats", newBucketCats)
+    }
+  }, [db])
+
+  useEffect(() => {
+    if(localStorage.getItem('buckets')) {
+      setBuckets(new Map(JSON.parse(localStorage.getItem('buckets'))))
+    }
+    if(localStorage.getItem('bucketCats')) {
+      setBucketCats(localStorage.getItem('bucketCats'))
+    }
+  }, [])
   
+  if(!buckets || !bucketCats) {
+    return (
+      <div>
+          <button onClick={() => handleOpenPicker()}>Open Picker</button>
+      </div>
+    );
+  }
+  console.log(buckets[0])
+  console.log('cats',bucketCats)
   return (
     <div>
-        <button onClick={() => handleOpenPicker()}>Open Picker</button>
+      {Array.from(buckets.entries()).map((cat) => {
+        console.log(cat)
+        return (
+        <div>
+          <h3>{bucketCats.values[cat[0]-1][1]}</h3>
+          <table>
+            <th><td>Name</td><td>Balance</td></th>
+            {cat[1].map(bucket => (
+              <tr key={bucket[0]}>
+                <td>{bucket[1]}</td>
+                <td>${bucket[2]/100.0}</td>
+              </tr>
+            ))}
+          </table>
+        </div>
+      )})}
     </div>
-  );
+  )
 }
 
 export default App;
