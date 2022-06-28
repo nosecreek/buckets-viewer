@@ -70,7 +70,7 @@ function App() {
       localStorage.setItem("buckets", JSON.stringify(Array.from(newBuckets)))
       const newBucketCats = db.exec("SELECT id, name FROM bucket_group")[0]
       setBucketCats(newBucketCats)
-      localStorage.setItem("bucketCats", newBucketCats)
+      localStorage.setItem("bucketCats", JSON.stringify(newBucketCats))
     }
   }, [db])
 
@@ -79,7 +79,7 @@ function App() {
       setBuckets(new Map(JSON.parse(localStorage.getItem('buckets'))))
     }
     if(localStorage.getItem('bucketCats')) {
-      setBucketCats(localStorage.getItem('bucketCats'))
+      setBucketCats(JSON.parse(localStorage.getItem('bucketCats')))
     }
   }, [])
   
@@ -95,18 +95,20 @@ function App() {
   return (
     <div>
       {Array.from(buckets.entries()).map((cat) => {
-        console.log(cat)
+        console.log(cat, bucketCats)
         return (
-        <div>
+        <div key={bucketCats.values[cat[0]-1][0]}>
           <h3>{bucketCats.values[cat[0]-1][1]}</h3>
           <table>
-            <th><td>Name</td><td>Balance</td></th>
-            {cat[1].map(bucket => (
-              <tr key={bucket[0]}>
-                <td>{bucket[1]}</td>
-                <td>${bucket[2]/100.0}</td>
-              </tr>
-            ))}
+            <thead><tr><th>Name</th><th>Balance</th></tr></thead>
+            <tbody>
+              {cat[1].map(bucket => (
+                <tr key={bucket[0]}>
+                  <td>{bucket[1]}</td>
+                  <td>${bucket[2]/100.0}</td>
+                </tr>
+              ))}
+            </tbody>
           </table>
         </div>
       )})}
