@@ -2,6 +2,9 @@ import  { useEffect, useState } from 'react';
 import useDrivePicker from 'react-google-drive-picker'
 import axios from 'axios'
 import initSqlJs from "sql.js"
+import Accounts from './components/Accounts';
+import Buckets from './components/Buckets';
+import { Container, Tab, Tabs } from 'react-bootstrap'
 
 function App() {
   const [db, setDb] = useState(null);
@@ -9,6 +12,7 @@ function App() {
   const [fileId, setFileId] = useState(null)
   const [buckets, setBuckets] = useState(null)
   const [bucketCats, setBucketCats] = useState(null)
+  const [view, setView] = useState("buckets")
 
   // const customViewsArray = [new google.picker.DocsView()]; // custom view
   const handleOpenPicker = () => {
@@ -90,29 +94,18 @@ function App() {
       </div>
     );
   }
-  console.log(buckets[0])
-  console.log('cats',bucketCats)
+
   return (
-    <div>
-      {Array.from(buckets.entries()).map((cat) => {
-        console.log(cat, bucketCats)
-        return (
-        <div key={bucketCats.values[cat[0]-1][0]}>
-          <h3>{bucketCats.values[cat[0]-1][1]}</h3>
-          <table>
-            <thead><tr><th>Name</th><th>Balance</th></tr></thead>
-            <tbody>
-              {cat[1].map(bucket => (
-                <tr key={bucket[0]}>
-                  <td>{bucket[1]}</td>
-                  <td>${bucket[2]/100.0}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )})}
-    </div>
+    <Container>
+      <Tabs activeKey={view} onSelect={(k) => setView(k)}>
+        <Tab eventKey="buckets" title="Buckets">
+          <Buckets buckets={buckets} bucketCats={bucketCats} />
+        </Tab>
+        <Tab eventKey="accounts" title="Accounts">
+          <Accounts />
+        </Tab>
+      </Tabs>
+    </Container>
   )
 }
 
