@@ -16,6 +16,8 @@ function App() {
   const [accounts, setAccounts] = useState(null)
   const [view, setView] = useState("buckets")
 
+  const currency = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' })
+
   // const customViewsArray = [new google.picker.DocsView()]; // custom view
   const handleOpenPicker = () => {
     openPicker({
@@ -117,10 +119,10 @@ function App() {
         <br /><br />
         <Tabs activeKey={view} onSelect={(k) => setView(k)}>
           <Tab eventKey="buckets" title="Buckets">
-            <Buckets buckets={buckets} bucketCats={bucketCats} />
+            <Buckets buckets={buckets} bucketCats={bucketCats} currency={currency} />
           </Tab>
           <Tab eventKey="accounts" title="Accounts">
-            <Accounts accounts={accounts} />
+            <Accounts accounts={accounts} currency={currency} />
           </Tab>
         </Tabs>
       </Container>

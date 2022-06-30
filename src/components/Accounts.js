@@ -1,6 +1,6 @@
 import { Accordion, Table } from "react-bootstrap"
 
-const Accounts = ({ accounts }) => {
+const Accounts = ({ accounts, currency }) => {
   const budgetAccounts = accounts.filter(a => a[3] === "")
   const offBudgetAccounts = accounts.filter(a => a[3] === "offbudget")
 
@@ -14,7 +14,7 @@ const Accounts = ({ accounts }) => {
               {budgetAccounts.map(account => (
                 <tr key={account[0]}>
                   <td>{account[1]}</td>
-                  <td style={{ width: "30%" }}>${account[2]/100.0}</td>
+                  <td style={{ width: "30%" }}>{currency.format(account[2]/100.0)}</td>
                 </tr>
               ))}
             </tbody>
@@ -29,7 +29,7 @@ const Accounts = ({ accounts }) => {
               {offBudgetAccounts.map(account => (
                 <tr key={account[0]}>
                   <td>{account[1]}</td>
-                  <td style={{ width: "30%" }}>${account[2]/100.0}</td>
+                  <td style={{ width: "30%" }}>{currency.format(account[2]/100.0)}</td>
                 </tr>
               ))}
             </tbody>
