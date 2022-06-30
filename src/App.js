@@ -15,6 +15,7 @@ function App() {
   const [bucketCats, setBucketCats] = useState(null)
   const [accounts, setAccounts] = useState(null)
   const [view, setView] = useState("buckets")
+  const [lastUpdated, setLastUpdated] = useState(null)
 
   const currency = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' })
 
@@ -84,6 +85,9 @@ function App() {
       const newAccounts = db.exec("SELECT id, name, balance, kind FROM account WHERE closed = 0")[0].values
       setAccounts(newAccounts)
       localStorage.setItem("accounts", JSON.stringify(newAccounts))
+
+      setLastUpdated(new Date())
+      localStorage.setItem('lastUpdated', JSON.stringify(new Date()))
     }
   }, [db])
 
@@ -93,6 +97,12 @@ function App() {
     }
     if(localStorage.getItem('bucketCats')) {
       setBucketCats(JSON.parse(localStorage.getItem('bucketCats')))
+    }
+    if(localStorage.getItem('accounts')) {
+      setAccounts(JSON.parse(localStorage.getItem('accounts')))
+    }
+    if(localStorage.getItem('lastUpdated')) {
+      setLastUpdated(new Date(JSON.parse(localStorage.getItem('lastUpdated'))))
     }
   }, [])
   
@@ -111,7 +121,7 @@ function App() {
           <Navbar.Brand><Bucket color="white" style={{ position: "relative", bottom: 2 }} /> Buckets Viewer</Navbar.Brand>
           <div style={{ textAlign: "right" }}>
             <Button variant="light"><ArrowClockwise /> Reload</Button>{' '}
-            <Button variant="light"><FileEarmarkText /> Select New File</Button>
+            <Button variant="light" onClick={() => handleOpenPicker()}><FileEarmarkText /> Select New File</Button>
           </div>
         </Container>
       </Navbar>
@@ -125,6 +135,7 @@ function App() {
             <Accounts accounts={accounts} currency={currency} />
           </Tab>
         </Tabs>
+        { lastUpdated ? <p><br />Last updated { lastUpdated.toString() }</p> : null }
       </Container>
     </div>
   )

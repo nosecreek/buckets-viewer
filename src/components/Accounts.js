@@ -5,7 +5,7 @@ const Accounts = ({ accounts, currency }) => {
   const offBudgetAccounts = accounts.filter(a => a[3] === "offbudget")
 
   return (
-    <Accordion defaultActiveKey={[]} alwaysOpen>
+    <Accordion defaultActiveKey={[0]} alwaysOpen>
       <Accordion.Item eventKey={0}>
         <Accordion.Header>Budget Accounts</Accordion.Header>
         <Accordion.Body>
