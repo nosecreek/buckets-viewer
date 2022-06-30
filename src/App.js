@@ -13,6 +13,7 @@ function App() {
   const [fileId, setFileId] = useState(null)
   const [buckets, setBuckets] = useState(null)
   const [bucketCats, setBucketCats] = useState(null)
+  const [accounts, setAccounts] = useState(null)
   const [view, setView] = useState("buckets")
 
   // const customViewsArray = [new google.picker.DocsView()]; // custom view
@@ -73,9 +74,14 @@ function App() {
       )
       setBuckets(newBuckets)
       localStorage.setItem("buckets", JSON.stringify(Array.from(newBuckets)))
+      
       const newBucketCats = db.exec("SELECT id, name FROM bucket_group")[0]
       setBucketCats(newBucketCats)
       localStorage.setItem("bucketCats", JSON.stringify(newBucketCats))
+      
+      const newAccounts = db.exec("SELECT id, name, balance, kind FROM account WHERE closed = 0")[0].values
+      setAccounts(newAccounts)
+      localStorage.setItem("accounts", JSON.stringify(newAccounts))
     }
   }, [db])
 
@@ -88,7 +94,7 @@ function App() {
     }
   }, [])
   
-  if(!buckets || !bucketCats) {
+  if(!buckets || !bucketCats || !accounts) {
     return (
       <div>
           <button onClick={() => handleOpenPicker()}>Open Picker</button>
@@ -114,7 +120,7 @@ function App() {
             <Buckets buckets={buckets} bucketCats={bucketCats} />
           </Tab>
           <Tab eventKey="accounts" title="Accounts">
-            <Accounts />
+            <Accounts accounts={accounts} />
           </Tab>
         </Tabs>
       </Container>
