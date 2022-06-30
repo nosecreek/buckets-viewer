@@ -4,7 +4,8 @@ import axios from 'axios'
 import initSqlJs from "sql.js"
 import Accounts from './components/Accounts';
 import Buckets from './components/Buckets';
-import { Container, Tab, Tabs } from 'react-bootstrap'
+import { Container, Tab, Tabs, Navbar, Button } from 'react-bootstrap'
+import { ArrowClockwise, Bucket, BucketFill, bucketFill, FileEarmarkText } from 'react-bootstrap-icons'
 
 function App() {
   const [db, setDb] = useState(null);
@@ -96,16 +97,28 @@ function App() {
   }
 
   return (
-    <Container>
-      <Tabs activeKey={view} onSelect={(k) => setView(k)}>
-        <Tab eventKey="buckets" title="Buckets">
-          <Buckets buckets={buckets} bucketCats={bucketCats} />
-        </Tab>
-        <Tab eventKey="accounts" title="Accounts">
-          <Accounts />
-        </Tab>
-      </Tabs>
-    </Container>
+    <div>
+      <Navbar bg="dark" variant="dark">
+        <Container>
+          <Navbar.Brand><Bucket color="white" style={{ position: "relative", bottom: 2 }} /> Buckets Viewer</Navbar.Brand>
+          <div style={{ textAlign: "right" }}>
+            <Button variant="light"><ArrowClockwise /> Reload</Button>{' '}
+            <Button variant="light"><FileEarmarkText /> Select New File</Button>
+          </div>
+        </Container>
+      </Navbar>
+      <Container>
+        <br /><br />
+        <Tabs activeKey={view} onSelect={(k) => setView(k)}>
+          <Tab eventKey="buckets" title="Buckets">
+            <Buckets buckets={buckets} bucketCats={bucketCats} />
+          </Tab>
+          <Tab eventKey="accounts" title="Accounts">
+            <Accounts />
+          </Tab>
+        </Tabs>
+      </Container>
+    </div>
   )
 }
 

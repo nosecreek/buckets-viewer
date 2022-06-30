@@ -16,7 +16,7 @@ const Buckets = ({ buckets, bucketCats }) => {
                 {cat[1].map(bucket => (
                   <tr key={bucket[0]}>
                     <td>{bucket[1]}</td>
-                    <td>${bucket[2]/100.0}</td>
+                    <td style={{ width: "30%" }}>${bucket[2]/100.0}</td>
                   </tr>
                 ))}
               </tbody>
