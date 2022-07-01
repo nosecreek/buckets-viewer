@@ -117,8 +117,12 @@ function App() {
   
   if(!buckets || !bucketCats || !accounts) {
     return (
-      <div>
-          <button onClick={() => handleOpenPicker()}>Open Picker</button>
+      <div style={{ height: "100vh" }} className="d-flex align-items-center justify-content-center">
+        <div style={{ textAlign: "center" }}>
+          <Button size="lg" variant="primary" onClick={() => handleOpenPicker()}>Select Budget</Button>
+          <br /><br />
+          <p>Welcome to Buckets Viewer. Use the button to select your .buckets file from Google Drive.</p>
+        </div>
       </div>
     );
   }
