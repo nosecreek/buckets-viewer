@@ -4,8 +4,9 @@ import axios from 'axios'
 import initSqlJs from "sql.js"
 import Accounts from './components/Accounts';
 import Buckets from './components/Buckets';
+import Reload from './components/Reload';
 import { Container, Tab, Tabs, Navbar, Button } from 'react-bootstrap'
-import { ArrowClockwise, Bucket, BucketFill, bucketFill, FileEarmarkText } from 'react-bootstrap-icons'
+import { Bucket, FileEarmarkText } from 'react-bootstrap-icons'
 
 function App() {
   const [db, setDb] = useState(null);
@@ -16,10 +17,11 @@ function App() {
   const [accounts, setAccounts] = useState(null)
   const [view, setView] = useState("buckets")
   const [lastUpdated, setLastUpdated] = useState(null)
+  const [reloadToken, setReloadToken] = useState(null)
 
   const currency = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' })
 
-  // const customViewsArray = [new google.picker.DocsView()]; // custom view
+  // Use Google Drive Picker
   const handleOpenPicker = () => {
     openPicker({
       clientId: process.env.REACT_APP_CLIENT_ID,
@@ -45,12 +47,14 @@ function App() {
       },
     })
   }
-
+  
+  //If we have an auth token, load the DB from Google Drive
   useEffect(()=>{
-    if(authResponse && fileId) {
+    if((authResponse || reloadToken) && fileId) {
+      const token = authResponse ? authResponse.access_token : reloadToken
       const getFile = async () => {
         const config =  {
-          headers: { Authorization: `Bearer ${authResponse.access_token}`,
+          headers: { Authorization: `Bearer ${token}`,
           'Content-Type': "application/x-sqlite3" },
         responseType: 'arraybuffer'
         }
@@ -62,12 +66,13 @@ function App() {
         setDb(new SQL.Database(uInt8Array));
       }
       console.log(authResponse, fileId)
-      localStorage.setItem('auth', authResponse.access_token);
+      localStorage.setItem('fileId', fileId);
       getFile()
     }
-    console.log(fileId, authResponse)
-  }, [authResponse, fileId])
+    console.log(fileId, authResponse || reloadToken)
+  }, [authResponse, reloadToken, fileId])
 
+  //DB Queries - Saved to Local Storage and State
   useEffect(() => {
     if(db) {
       const newBuckets = db.exec("SELECT id, name, balance, group_id FROM bucket WHERE kicked = 0")[0].values
@@ -91,6 +96,7 @@ function App() {
     }
   }, [db])
 
+  //Retrieve Data from Local Storage
   useEffect(() => {
     if(localStorage.getItem('buckets')) {
       setBuckets(new Map(JSON.parse(localStorage.getItem('buckets'))))
@@ -103,6 +109,9 @@ function App() {
     }
     if(localStorage.getItem('lastUpdated')) {
       setLastUpdated(new Date(JSON.parse(localStorage.getItem('lastUpdated'))))
+    }
+    if(localStorage.getItem('fileId')) {
+      setFileId(localStorage.getItem('fileId'))
     }
   }, [])
   
@@ -120,7 +129,7 @@ function App() {
         <Container>
           <Navbar.Brand><Bucket color="white" style={{ position: "relative", bottom: 2 }} /> Buckets Viewer</Navbar.Brand>
           <div style={{ textAlign: "right" }}>
-            <Button variant="light"><ArrowClockwise /> Reload</Button>{' '}
+            <Reload accessToken={reloadToken} setAccessToken={setReloadToken} />{' '}
             <Button variant="light" onClick={() => handleOpenPicker()}><FileEarmarkText /> Select New File</Button>
           </div>
         </Container>
