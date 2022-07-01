@@ -22,8 +22,8 @@ function App() {
   // const customViewsArray = [new google.picker.DocsView()]; // custom view
   const handleOpenPicker = () => {
     openPicker({
-      clientId: "758483264841-9kmp9h0v8qghfn8e7d4k5mjg99d0fpn8.apps.googleusercontent.com",
-      developerKey: "AIzaSyAmKw4RxJhq67-H-M2HkjoqibzJN5fzqds",
+      clientId: process.env.REACT_APP_CLIENT_ID,
+      developerKey: process.env.REACT_APP_DEVELOPER_KEY,
       viewId: "DOCS",
       // token: localStorage.getItem('auth') || null, // pass oauth token in case you already have one
       showUploadView: true,
