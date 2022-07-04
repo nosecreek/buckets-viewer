@@ -14,11 +14,6 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - name: Get Secrets
-      env:
-        REACT_APP_CLIENT_ID: ${{ secrets.REACT_APP_CLIENT_ID }}
-        REACT_APP_DEVELOPER_KEY: ${{ secrets.REACT_APP_DEVELOPER_KEY }}
-    
     - name: Checkout code
       uses: actions/checkout@v2
     
@@ -32,6 +27,9 @@ jobs:
     
     - name: Build project
       run: npm run build
+      env:
+        REACT_APP_CLIENT_ID: ${{ secrets.REACT_APP_CLIENT_ID }}
+        REACT_APP_DEVELOPER_KEY: ${{ secrets.REACT_APP_DEVELOPER_KEY }}
     
     # - name: Run tests
     #   run: npm run test
