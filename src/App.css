@@ -5,3 +5,9 @@
     width: 100%;
   }
 }
+
+td:nth-child(2) {
+  width: 33%;
+  min-width: 33%;
+  max-width: 50%;
+}

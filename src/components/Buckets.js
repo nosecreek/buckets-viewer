@@ -15,7 +15,7 @@ const Buckets = ({ buckets, bucketCats, currency }) => {
                 {cat[1].map(bucket => (
                   <tr key={bucket[0]}>
                     <td>{bucket[1]}</td>
-                    <td style={{ minWidth: "30%" }}>{currency.format(bucket[2]/100.0)}</td>
+                    <td>{currency.format(bucket[2]/100.0)}</td>
                   </tr>
                 ))}
               </tbody>
