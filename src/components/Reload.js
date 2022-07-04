@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { ArrowClockwise } from 'react-bootstrap-icons'
 import { Button } from 'react-bootstrap'
 
@@ -16,7 +15,8 @@ const Reload = ({ accessToken, setAccessToken }) => {
 
   const handleReload = () => {
     loadScript('https://accounts.google.com/gsi/client').then(() => {
-      const client = google.accounts.oauth2.initTokenClient({
+    const google = window.google  
+    const client = google.accounts.oauth2.initTokenClient({
         client_id: process.env.REACT_APP_CLIENT_ID,
         scope: 'https://www.googleapis.com/auth/drive.readonly',
         callback: (tokenResponse) => {
