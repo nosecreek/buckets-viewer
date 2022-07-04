@@ -145,7 +145,7 @@ function App() {
             <Accounts accounts={accounts} currency={currency} />
           </Tab>
         </Tabs>
-        { lastUpdated ? <p><br />Last updated { lastUpdated.toString() }</p> : null }
+        { lastUpdated ? <p><br />Last loaded { lastUpdated.toString() }</p> : null }
       </Container>
     </div>
   )
