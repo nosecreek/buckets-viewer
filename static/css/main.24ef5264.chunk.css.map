@@ -1,0 +1,1 @@
+{"version":3,"sources":["webpack://src/App.css"],"names":[],"mappings":"AAAA,yBACE,eAEE,oBAAe,CACf,UACF,CACF","file":"main.24ef5264.chunk.css","sourcesContent":["@media (max-width: 500px) {\n  .navbar button {\n    margin: 3px;\n    margin-right: 0;\n    width: 100%;\n  }\n}"]}
