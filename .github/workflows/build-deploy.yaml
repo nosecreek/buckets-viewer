@@ -3,10 +3,17 @@ name: Build & deploy
 on:
   push:
     branches:
+<<<<<<< HEAD
       - master
   pull_request:
     branches:
       - master
+=======
+      - main
+  pull_request:
+    branches:
+      - main
+>>>>>>> 8edc709c40f9ae40a857b95aa3bcd892a11f8cab
 
 jobs:
   build:
