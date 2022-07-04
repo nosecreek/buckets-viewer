@@ -8,6 +8,10 @@ on:
     branches:
       - master
 
+env:
+  REACT_APP_CLIENT_ID: ${{ secrets.REACT_APP_CLIENT_ID }}
+  REACT_APP_DEVELOPER_KEY: ${{ secrets.REACT_APP_DEVELOPER_KEY }}
+
 jobs:
   build:
     name: Build
@@ -27,9 +31,6 @@ jobs:
     
     - name: Build project
       run: npm run build
-      env:
-        REACT_APP_CLIENT_ID: ${{ secrets.REACT_APP_CLIENT_ID }}
-        REACT_APP_DEVELOPER_KEY: ${{ secrets.REACT_APP_DEVELOPER_KEY }}
     
     # - name: Run tests
     #   run: npm run test
