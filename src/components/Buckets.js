@@ -5,7 +5,6 @@ const Buckets = ({ buckets, bucketCats, currency }) => {
   return (
     <Accordion defaultActiveKey={[]} alwaysOpen>
       {Array.from(buckets.entries()).map((cat) => {
-        console.log(cat, bucketCats)
         return (
         <Accordion.Item eventKey={bucketCats.values[cat[0]-1][0]} key={bucketCats.values[cat[0]-1][0]}>
           <Accordion.Header>{bucketCats.values[cat[0]-1][1]}</Accordion.Header>

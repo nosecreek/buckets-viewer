@@ -40,7 +40,6 @@ function App() {
           console.log('User clicked cancel/close button')
         }
         if(data.action === 'picked') {
-          console.log(data)
           setFileId(data.docs[0].id)
           localStorage.setItem('fileId', data.docs[0].id);
         }
@@ -65,11 +64,9 @@ function App() {
         })
         setDb(new SQL.Database(uInt8Array));
       }
-      console.log(authResponse, fileId)
       localStorage.setItem('fileId', fileId);
       getFile()
     }
-    console.log(fileId, authResponse || reloadToken)
   }, [authResponse, reloadToken, fileId])
 
   //DB Queries - Saved to Local Storage and State
