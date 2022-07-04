@@ -14,7 +14,7 @@ const Accounts = ({ accounts, currency }) => {
               {budgetAccounts.map(account => (
                 <tr key={account[0]}>
                   <td>{account[1]}</td>
-                  <td style={{ width: "30%" }}>{currency.format(account[2]/100.0)}</td>
+                  <td style={{ minWidth: "30%" }}>{currency.format(account[2]/100.0)}</td>
                 </tr>
               ))}
             </tbody>
@@ -29,7 +29,7 @@ const Accounts = ({ accounts, currency }) => {
               {offBudgetAccounts.map(account => (
                 <tr key={account[0]}>
                   <td>{account[1]}</td>
-                  <td style={{ width: "30%" }}>{currency.format(account[2]/100.0)}</td>
+                  <td style={{ minWidth: "30%" }}>{currency.format(account[2]/100.0)}</td>
                 </tr>
               ))}
             </tbody>

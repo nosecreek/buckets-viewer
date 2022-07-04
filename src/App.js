@@ -7,6 +7,7 @@ import Buckets from './components/Buckets';
 import Reload from './components/Reload';
 import { Container, Tab, Tabs, Navbar, Button } from 'react-bootstrap'
 import { Bucket, FileEarmarkText } from 'react-bootstrap-icons'
+import './App.css'
 
 function App() {
   const [db, setDb] = useState(null);
