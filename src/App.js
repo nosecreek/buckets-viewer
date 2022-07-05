@@ -146,7 +146,10 @@ function App() {
             <Accounts accounts={accounts} currency={currency} />
           </Tab>
         </Tabs>
-        { lastUpdated ? <p><br />Last loaded { lastUpdated.toString() }</p> : null }
+        <div className='footer'>
+          { lastUpdated ? <p><br />Last loaded { lastUpdated.toString() }</p> : null }
+          <p>&copy;2022 Dustin Lammiman. <a href="privacy.html">Privacy Policy</a>. This website is not associated with One Part Rain, LLC.</p>
+        </div>
       </Container>
     </div>
   )
