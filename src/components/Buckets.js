@@ -4,10 +4,10 @@ const Buckets = ({ buckets, bucketCats, currency }) => {
 
   return (
     <Accordion defaultActiveKey={[]} alwaysOpen>
-      {Array.from(buckets.entries()).map((cat) => {
+      {Array.from(buckets.entries()).map((cat, i) => {
         return (
-        <Accordion.Item eventKey={bucketCats.values[cat[0]-1][0]} key={bucketCats.values[cat[0]-1][0]}>
-          <Accordion.Header>{bucketCats.values[cat[0]-1][1]}</Accordion.Header>
+        <Accordion.Item eventKey={i} key={i}>
+          <Accordion.Header>{bucketCats.values[cat[0]-1] ? bucketCats.values[cat[0]-1][1] : "Misc"}</Accordion.Header>
           <Accordion.Body>
             <Table striped hover bordered>
               <tbody><tr><th>Name</th><th>Balance</th></tr>
