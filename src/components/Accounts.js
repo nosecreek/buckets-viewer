@@ -1,8 +1,8 @@
-import { Accordion, Table } from "react-bootstrap"
+import { Accordion, Table } from 'react-bootstrap'
 
 const Accounts = ({ accounts, currency }) => {
-  const budgetAccounts = accounts.filter(a => a[3] === "")
-  const offBudgetAccounts = accounts.filter(a => a[3] === "offbudget")
+  const budgetAccounts = accounts.filter((a) => a[3] === '')
+  const offBudgetAccounts = accounts.filter((a) => a[3] === 'offbudget')
 
   return (
     <Accordion defaultActiveKey={[0]} alwaysOpen>
@@ -10,11 +10,15 @@ const Accounts = ({ accounts, currency }) => {
         <Accordion.Header>Budget Accounts</Accordion.Header>
         <Accordion.Body>
           <Table striped hover bordered>
-            <tbody><tr><th>Name</th><th>Balance</th></tr>
-              {budgetAccounts.map(account => (
+            <tbody>
+              <tr>
+                <th>Name</th>
+                <th>Balance</th>
+              </tr>
+              {budgetAccounts.map((account) => (
                 <tr key={account[0]}>
                   <td>{account[1]}</td>
-                  <td>{currency.format(account[2]/100.0)}</td>
+                  <td>{currency.format(account[2] / 100.0)}</td>
                 </tr>
               ))}
             </tbody>
@@ -25,11 +29,15 @@ const Accounts = ({ accounts, currency }) => {
         <Accordion.Header>Off Budget Accounts</Accordion.Header>
         <Accordion.Body>
           <Table striped hover bordered>
-            <tbody><tr><th>Name</th><th>Balance</th></tr>
-              {offBudgetAccounts.map(account => (
+            <tbody>
+              <tr>
+                <th>Name</th>
+                <th>Balance</th>
+              </tr>
+              {offBudgetAccounts.map((account) => (
                 <tr key={account[0]}>
                   <td>{account[1]}</td>
-                  <td>{currency.format(account[2]/100.0)}</td>
+                  <td>{currency.format(account[2] / 100.0)}</td>
                 </tr>
               ))}
             </tbody>
