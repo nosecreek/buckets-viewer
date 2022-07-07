@@ -17,7 +17,7 @@ const Reload = ({ accessToken, setAccessToken }) => {
       const google = window.google
       const client = google.accounts.oauth2.initTokenClient({
         client_id: process.env.REACT_APP_CLIENT_ID,
-        scope: 'https://www.googleapis.com/auth/drive.readonly',
+        scope: 'https://www.googleapis.com/auth/drive.file',
         callback: (tokenResponse) => {
           setAccessToken(tokenResponse.access_token)
         }

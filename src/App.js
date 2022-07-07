@@ -36,7 +36,6 @@ function App() {
       showUploadFolders: true,
       supportDrives: true,
       multiselect: true,
-      customScopes: ['https://www.googleapis.com/auth/drive.file'],
       viewMimeTypes: 'application/octet-stream',
       // customViews: customViewsArray, // custom view
       callbackFunction: (data) => {
