@@ -38,7 +38,7 @@ function App() {
       multiselect: true,
       viewMimeTypes: 'application/octet-stream',
       viewQuery: "*.buckets",
-      // customViews: customViewsArray, // custom view
+      customScopes: ['https://www.googleapis.com/auth/drive.file'],
       callbackFunction: (data) => {
         if (data.action === 'cancel') {
           console.log('User clicked cancel/close button')
