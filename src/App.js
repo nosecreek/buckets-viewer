@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import useDrivePicker from 'react-google-drive-picker'
+import useDrivePicker from './react-google-drive-picker'
 import axios from 'axios'
 import initSqlJs from 'sql.js'
 import Accounts from './components/Accounts'
