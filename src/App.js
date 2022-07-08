@@ -37,6 +37,7 @@ function App() {
       supportDrives: true,
       multiselect: true,
       viewMimeTypes: 'application/octet-stream',
+      viewQuery: "*.buckets",
       // customViews: customViewsArray, // custom view
       callbackFunction: (data) => {
         if (data.action === 'cancel') {
