@@ -58,6 +58,7 @@ function App() {
   //If we have an auth token, load the DB from Google Drive
   useEffect(() => {
     if ((authResponse || reloadToken) && fileId) {
+      setError(null)
       const token = authResponse ? authResponse.access_token : reloadToken
       const getFile = async () => {
         const config = {
@@ -80,6 +81,7 @@ function App() {
           .catch((e) => {
             setError(e.message)
             setFileId(null)
+            setBuckets(null)
             localStorage.clear()
           })
         const uInt8Array = new Uint8Array(response.data)
@@ -124,6 +126,8 @@ function App() {
       } catch (e) {
         setError(e.toString())
         setFileId(null)
+        setBuckets(null)
+        setDb(null)
         localStorage.clear()
       }
     }
