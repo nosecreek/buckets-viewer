@@ -47,7 +47,6 @@ function useDrivePicker() {
     authRes = _g[0],
     setAuthRes = _g[1]
   var google = window.google
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   var picker
     // get the apis from googleapis
   ;(0, react_1.useEffect)(
@@ -113,9 +112,7 @@ function useDrivePicker() {
   }
   // load the Drive picker api
   var loadApis = function () {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     window.gapi.load('auth')
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     window.gapi.load('picker', { callback: onPickerApiLoad })
   }
   var onPickerApiLoad = function () {
