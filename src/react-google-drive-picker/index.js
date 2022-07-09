@@ -26,6 +26,7 @@ function useDrivePicker() {
     var _e = (0, react_1.useState)(false), authWindowVisible = _e[0], setAuthWindowVisible = _e[1];
     var _f = (0, react_1.useState)(typeDefs_1.defaultConfiguration), config = _f[0], setConfig = _f[1];
     var _g = (0, react_1.useState)(), authRes = _g[0], setAuthRes = _g[1];
+    var google = window.google;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     var picker;
     // get the apis from googleapis
