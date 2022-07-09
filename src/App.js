@@ -5,7 +5,7 @@ import initSqlJs from 'sql.js'
 import Accounts from './components/Accounts'
 import Buckets from './components/Buckets'
 import Reload from './components/Reload'
-import { Container, Tab, Tabs, Navbar, Button } from 'react-bootstrap'
+import { Container, Tab, Tabs, Navbar, Button, Alert } from 'react-bootstrap'
 import { Bucket, FileEarmarkText } from 'react-bootstrap-icons'
 import './App.css'
 
@@ -21,6 +21,7 @@ function App() {
   const [lastUpdated, setLastUpdated] = useState(null)
   const [reloadToken, setReloadToken] = useState(null)
   const [downloadProgress, setDownloadProgress] = useState(0)
+  const [error, setError] = useState(null)
 
   const currency = new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -71,10 +72,16 @@ function App() {
             )
           }
         }
-        const response = await axios.get(
-          `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`,
-          config
-        )
+        const response = await axios
+          .get(
+            `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`,
+            config
+          )
+          .catch((e) => {
+            setError(e.message)
+            setFileId(null)
+            localStorage.clear()
+          })
         const uInt8Array = new Uint8Array(response.data)
         const SQL = await initSqlJs({
           locateFile: (file) => `https://sql.js.org/dist/${file}`
@@ -89,30 +96,36 @@ function App() {
   //DB Queries - Saved to Local Storage and State
   useEffect(() => {
     if (db) {
-      const newBuckets = db
-        .exec(
-          'SELECT id, name, balance, group_id FROM bucket WHERE kicked = 0'
-        )[0]
-        .values.reduce(
-          (entryMap, e) =>
-            entryMap.set(e[3], [...(entryMap.get(e[3]) || []), e]),
-          new Map()
-        )
-      setBuckets(newBuckets)
-      localStorage.setItem('buckets', JSON.stringify(Array.from(newBuckets)))
+      try {
+        const newBuckets = db
+          .exec(
+            'SELECT id, name, balance, group_id FROM bucket WHERE kicked = 0'
+          )[0]
+          .values.reduce(
+            (entryMap, e) =>
+              entryMap.set(e[3], [...(entryMap.get(e[3]) || []), e]),
+            new Map()
+          )
+        setBuckets(newBuckets)
+        localStorage.setItem('buckets', JSON.stringify(Array.from(newBuckets)))
 
-      const newBucketCats = db.exec('SELECT id, name FROM bucket_group')[0]
-      setBucketCats(newBucketCats)
-      localStorage.setItem('bucketCats', JSON.stringify(newBucketCats))
+        const newBucketCats = db.exec('SELECT id, name FROM bucket_group')[0]
+        setBucketCats(newBucketCats)
+        localStorage.setItem('bucketCats', JSON.stringify(newBucketCats))
 
-      const newAccounts = db.exec(
-        'SELECT id, name, balance, kind FROM account WHERE closed = 0'
-      )[0].values
-      setAccounts(newAccounts)
-      localStorage.setItem('accounts', JSON.stringify(newAccounts))
+        const newAccounts = db.exec(
+          'SELECT id, name, balance, kind FROM account WHERE closed = 0'
+        )[0].values
+        setAccounts(newAccounts)
+        localStorage.setItem('accounts', JSON.stringify(newAccounts))
 
-      setLastUpdated(new Date())
-      localStorage.setItem('lastUpdated', JSON.stringify(new Date()))
+        setLastUpdated(new Date())
+        localStorage.setItem('lastUpdated', JSON.stringify(new Date()))
+      } catch (e) {
+        setError(e.toString())
+        setFileId(null)
+        localStorage.clear()
+      }
     }
   }, [db])
 
@@ -135,28 +148,31 @@ function App() {
     }
   }, [])
 
-  if (!fileId) {
+  if (!fileId || error) {
     return (
-      <div
-        style={{ height: '100vh' }}
-        className="d-flex align-items-center justify-content-center"
-      >
-        <div style={{ textAlign: 'center' }}>
-          <Button
-            size="lg"
-            variant="primary"
-            onClick={() => handleOpenPicker()}
-          >
-            Select Budget
-          </Button>
-          <br />
-          <br />
-          <p>
-            Welcome to Buckets Viewer. Use the button to select your .buckets
-            file from Google Drive.
-          </p>
+      <>
+        {error ? <Alert variant="danger">{error}</Alert> : null}
+        <div
+          style={{ height: '100vh' }}
+          className="d-flex align-items-center justify-content-center"
+        >
+          <div style={{ textAlign: 'center' }}>
+            <Button
+              size="lg"
+              variant="primary"
+              onClick={() => handleOpenPicker()}
+            >
+              Select Budget
+            </Button>
+            <br />
+            <br />
+            <p>
+              Welcome to Buckets Viewer. Use the button to select your .buckets
+              file from Google Drive.
+            </p>
+          </div>
         </div>
-      </div>
+      </>
     )
   }
 
