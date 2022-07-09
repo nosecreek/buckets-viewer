@@ -13,12 +13,14 @@ function App() {
   const [db, setDb] = useState(null)
   const [openPicker, authResponse] = useDrivePicker()
   const [fileId, setFileId] = useState(null)
+  const [fileSize, setFileSize] = useState(null)
   const [buckets, setBuckets] = useState(null)
   const [bucketCats, setBucketCats] = useState(null)
   const [accounts, setAccounts] = useState(null)
   const [view, setView] = useState('buckets')
   const [lastUpdated, setLastUpdated] = useState(null)
   const [reloadToken, setReloadToken] = useState(null)
+  const [downloadProgress, setDownloadProgress] = useState(0)
 
   const currency = new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -37,13 +39,14 @@ function App() {
       supportDrives: true,
       multiselect: true,
       viewMimeTypes: 'application/octet-stream',
-      viewQuery: "*.buckets",
+      viewQuery: '*.buckets',
       customScopes: ['https://www.googleapis.com/auth/drive.file'],
       callbackFunction: (data) => {
         if (data.action === 'cancel') {
           console.log('User clicked cancel/close button')
         }
         if (data.action === 'picked') {
+          setFileSize(data.docs[0].sizeBytes)
           setFileId(data.docs[0].id)
           localStorage.setItem('fileId', data.docs[0].id)
         }
@@ -61,7 +64,12 @@ function App() {
             Authorization: `Bearer ${token}`,
             'Content-Type': 'application/x-sqlite3'
           },
-          responseType: 'arraybuffer'
+          responseType: 'arraybuffer',
+          onDownloadProgress: (progressEvent) => {
+            setDownloadProgress(
+              Math.floor((progressEvent.loaded / fileSize) * 100)
+            )
+          }
         }
         const response = await axios.get(
           `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`,
@@ -76,7 +84,7 @@ function App() {
       localStorage.setItem('fileId', fileId)
       getFile()
     }
-  }, [authResponse, reloadToken, fileId])
+  }, [authResponse, reloadToken, fileId, fileSize])
 
   //DB Queries - Saved to Local Storage and State
   useEffect(() => {
@@ -127,7 +135,7 @@ function App() {
     }
   }, [])
 
-  if (!buckets || !bucketCats || !accounts) {
+  if (!fileId) {
     return (
       <div
         style={{ height: '100vh' }}
@@ -148,6 +156,17 @@ function App() {
             file from Google Drive.
           </p>
         </div>
+      </div>
+    )
+  }
+
+  if (!buckets || !bucketCats || !accounts) {
+    return (
+      <div
+        style={{ height: '100vh', textAlign: 'center' }}
+        className="d-flex align-items-center justify-content-center"
+      >
+        Loading {downloadProgress}%
       </div>
     )
   }
