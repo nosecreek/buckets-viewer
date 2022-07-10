@@ -1,7 +1,7 @@
 import { Accordion, Table } from 'react-bootstrap'
 
 const Accounts = ({ accounts, currency }) => {
-  const budgetAccounts = accounts.filter((a) => a[3] === '')
+  const budgetAccounts = accounts.filter((a) => a[3] !== 'offbudget')
   const offBudgetAccounts = accounts.filter((a) => a[3] === 'offbudget')
 
   return (
