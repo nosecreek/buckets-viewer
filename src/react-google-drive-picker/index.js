@@ -120,7 +120,7 @@ function useDrivePicker() {
   }
   var createPicker = function (_a) {
     var token = _a.token,
-      _b = _a.appId,
+      //   _b = _a.appId,
       //   appId = _b === void 0 ? '' : _b,
       _c = _a.supportDrives,
       supportDrives = _c === void 0 ? false : _c,
