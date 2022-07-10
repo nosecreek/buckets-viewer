@@ -155,7 +155,7 @@ function useDrivePicker() {
     if (showUploadFolders) uploadView.setIncludeFolders(true)
     if (setParentFolder) uploadView.setParent(setParentFolder)
     picker = new google.picker.PickerBuilder()
-      .setAppId(appId)
+      .setAppId('758483264841')
       .setOAuthToken(token)
       .setDeveloperKey(developerKey)
       .setLocale(locale)

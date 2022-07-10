@@ -75,7 +75,7 @@ function App() {
         }
         const response = await axios
           .get(
-            `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`,
+            `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media&supportsAllDrives=true`,
             config
           )
           .catch((e) => {
