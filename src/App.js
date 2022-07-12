@@ -35,8 +35,8 @@ function App() {
       developerKey: process.env.REACT_APP_DEVELOPER_KEY,
       viewId: 'DOCS',
       // token: localStorage.getItem('auth') || null, // pass oauth token in case you already have one
-      showUploadView: true,
-      showUploadFolders: true,
+      showUploadView: false,
+      showUploadFolders: false,
       supportDrives: true,
       multiselect: true,
       viewMimeTypes: 'application/octet-stream',
