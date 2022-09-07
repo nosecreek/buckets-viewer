@@ -29,7 +29,6 @@ const Buckets = ({ buckets, bucketCats, setTransactionView, currency }) => {
                             bucket[1],
                             bucket[2]
                           ])
-                          console.log(bucket[0])
                         }}
                       >
                         {bucket[1]}
