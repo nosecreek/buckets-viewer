@@ -14,6 +14,7 @@
 
 td:nth-child(2) {
   max-width: 50vw;
+  overflow-wrap: anywhere;
 }
 
 .footer p {
