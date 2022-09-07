@@ -1,6 +1,6 @@
 import { Accordion, Table } from 'react-bootstrap'
 
-const Buckets = ({ buckets, bucketCats, currency }) => {
+const Buckets = ({ buckets, bucketCats, setTransactionView, currency }) => {
   return (
     <Accordion defaultActiveKey={[]} alwaysOpen>
       {Array.from(buckets.entries()).map((cat, i) => {
@@ -21,7 +21,14 @@ const Buckets = ({ buckets, bucketCats, currency }) => {
 
                   {cat[1].map((bucket) => (
                     <tr key={bucket[0]}>
-                      <td>{bucket[1]}</td>
+                      <td
+                        onClick={() => {
+                          setTransactionView(['bucket', bucket[0], bucket[1]])
+                          console.log(bucket[0])
+                        }}
+                      >
+                        {bucket[1]}
+                      </td>
                       <td>{currency.format(bucket[2] / 100.0)}</td>
                     </tr>
                   ))}

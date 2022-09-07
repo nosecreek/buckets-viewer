@@ -19,3 +19,7 @@ td:nth-child(2) {
 .alert {
   text-align: center;
 }
+
+.accordion-body td {
+  cursor: pointer;
+}
