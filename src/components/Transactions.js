@@ -6,6 +6,15 @@ const Transactions = ({
   currency,
   dateFormat
 }) => {
+  if (!transactions) {
+    return (
+      <p>
+        No transactions found. You probably need to reload your budget file to
+        see transactions.
+      </p>
+    )
+  }
+
   const filteredTransactions = transactions
     .filter((t) => t[1] === transactionView[1])
     .reverse()
