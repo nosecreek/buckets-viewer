@@ -6,10 +6,14 @@
   }
 }
 
-td:nth-child(2) {
+.accordion-body td:nth-child(2) {
   width: 33%;
   min-width: 33%;
   max-width: 50%;
+}
+
+td:nth-child(2) {
+  max-width: 50vw;
 }
 
 .footer p {
@@ -18,4 +22,20 @@ td:nth-child(2) {
 
 .alert {
   text-align: center;
+}
+
+.accordion-body td {
+  cursor: pointer;
+}
+
+h3 {
+  padding-top: .25em;
+}
+
+button.back {
+  text-decoration: underline;
+  border: 0;
+  background: none;
+  padding: 0;
+  color: #0a58ca;
 }

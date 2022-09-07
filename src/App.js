@@ -5,6 +5,7 @@ import initSqlJs from 'sql.js'
 import Accounts from './components/Accounts'
 import Buckets from './components/Buckets'
 import Reload from './components/Reload'
+import Transactions from './components/Transactions'
 import { Container, Tab, Tabs, Navbar, Button, Alert } from 'react-bootstrap'
 import { Bucket, FileEarmarkText } from 'react-bootstrap-icons'
 import './App.css'
@@ -17,7 +18,10 @@ function App() {
   const [buckets, setBuckets] = useState(null)
   const [bucketCats, setBucketCats] = useState(null)
   const [accounts, setAccounts] = useState(null)
+  const [bucketTransactions, setBucketTransactions] = useState(null)
+  const [accountTransactions, setAccountTransactions] = useState(null)
   const [view, setView] = useState('buckets')
+  const [transactionView, setTransactionView] = useState(null) //null or [transaction type(bucket/account), bucket/account id, name, balance]
   const [lastUpdated, setLastUpdated] = useState(null)
   const [reloadToken, setReloadToken] = useState(null)
   const [downloadProgress, setDownloadProgress] = useState(0)
@@ -27,6 +31,7 @@ function App() {
     style: 'currency',
     currency: 'USD'
   })
+  const dateFormat = { year: 'numeric', month: 'long', day: 'numeric' }
 
   // Use Google Drive Picker
   const handleOpenPicker = () => {
@@ -121,6 +126,24 @@ function App() {
         setAccounts(newAccounts)
         localStorage.setItem('accounts', JSON.stringify(newAccounts))
 
+        const newBucketTransactions = db.exec(
+          'SELECT id, bucket_id, posted, memo, amount FROM bucket_transaction WHERE posted > date("now","-1 years")'
+        )[0].values
+        setBucketTransactions(newBucketTransactions)
+        localStorage.setItem(
+          'bucketTransactions',
+          JSON.stringify(newBucketTransactions)
+        )
+
+        const newAccountTransactions = db.exec(
+          'SELECT id, account_id, posted, memo, amount FROM account_transaction WHERE posted > date("now","-1 years")'
+        )[0].values
+        setAccountTransactions(newAccountTransactions)
+        localStorage.setItem(
+          'accountTransactions',
+          JSON.stringify(newAccountTransactions)
+        )
+
         setLastUpdated(new Date())
         localStorage.setItem('lastUpdated', JSON.stringify(new Date()))
       } catch (e) {
@@ -143,6 +166,16 @@ function App() {
     }
     if (localStorage.getItem('accounts')) {
       setAccounts(JSON.parse(localStorage.getItem('accounts')))
+    }
+    if (localStorage.getItem('bucketTransactions')) {
+      setBucketTransactions(
+        JSON.parse(localStorage.getItem('bucketTransactions'))
+      )
+    }
+    if (localStorage.getItem('accountTransactions')) {
+      setAccountTransactions(
+        JSON.parse(localStorage.getItem('accountTransactions'))
+      )
     }
     if (localStorage.getItem('lastUpdated')) {
       setLastUpdated(new Date(JSON.parse(localStorage.getItem('lastUpdated'))))
@@ -210,16 +243,47 @@ function App() {
       <Container>
         <br />
         <br />
-        <Tabs activeKey={view} onSelect={(k) => setView(k)}>
+        <Tabs
+          activeKey={view}
+          onSelect={(k) => {
+            setView(k)
+            setTransactionView(null)
+          }}
+        >
           <Tab eventKey="buckets" title="Buckets">
-            <Buckets
-              buckets={buckets}
-              bucketCats={bucketCats}
-              currency={currency}
-            />
+            {!transactionView || !transactionView[0] === 'bucket' ? (
+              <Buckets
+                buckets={buckets}
+                bucketCats={bucketCats}
+                setTransactionView={setTransactionView}
+                currency={currency}
+              />
+            ) : (
+              <Transactions
+                transactionView={transactionView}
+                setTransactionView={setTransactionView}
+                transactions={bucketTransactions}
+                currency={currency}
+                dateFormat={dateFormat}
+              />
+            )}
           </Tab>
           <Tab eventKey="accounts" title="Accounts">
-            <Accounts accounts={accounts} currency={currency} />
+            {!transactionView || !transactionView[0] === 'account' ? (
+              <Accounts
+                accounts={accounts}
+                setTransactionView={setTransactionView}
+                currency={currency}
+              />
+            ) : (
+              <Transactions
+                transactionView={transactionView}
+                setTransactionView={setTransactionView}
+                transactions={accountTransactions}
+                currency={currency}
+                dateFormat={dateFormat}
+              />
+            )}
           </Tab>
         </Tabs>
         <div className="footer">
