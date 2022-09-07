@@ -23,7 +23,12 @@ const Buckets = ({ buckets, bucketCats, setTransactionView, currency }) => {
                     <tr key={bucket[0]}>
                       <td
                         onClick={() => {
-                          setTransactionView(['bucket', bucket[0], bucket[1]])
+                          setTransactionView([
+                            'bucket',
+                            bucket[0],
+                            bucket[1],
+                            bucket[2]
+                          ])
                           console.log(bucket[0])
                         }}
                       >

@@ -21,7 +21,7 @@ function App() {
   const [bucketTransactions, setBucketTransactions] = useState(null)
   const [accountTransactions, setAccountTransactions] = useState(null)
   const [view, setView] = useState('buckets')
-  const [transactionView, setTransactionView] = useState(null)
+  const [transactionView, setTransactionView] = useState(null) //null or [transaction type(bucket/account), bucket/account id, name, balance]
   const [lastUpdated, setLastUpdated] = useState(null)
   const [reloadToken, setReloadToken] = useState(null)
   const [downloadProgress, setDownloadProgress] = useState(0)
@@ -134,7 +134,15 @@ function App() {
           'bucketTransactions',
           JSON.stringify(newBucketTransactions)
         )
-        console.log('transactions', newBucketTransactions)
+
+        const newAccountTransactions = db.exec(
+          'SELECT id, account_id, posted, memo, amount FROM account_transaction WHERE posted > date("now","-1 years")'
+        )[0].values
+        setAccountTransactions(newAccountTransactions)
+        localStorage.setItem(
+          'accountTransactions',
+          JSON.stringify(newAccountTransactions)
+        )
 
         setLastUpdated(new Date())
         localStorage.setItem('lastUpdated', JSON.stringify(new Date()))
@@ -162,6 +170,11 @@ function App() {
     if (localStorage.getItem('bucketTransactions')) {
       setBucketTransactions(
         JSON.parse(localStorage.getItem('bucketTransactions'))
+      )
+    }
+    if (localStorage.getItem('accountTransactions')) {
+      setAccountTransactions(
+        JSON.parse(localStorage.getItem('accountTransactions'))
       )
     }
     if (localStorage.getItem('lastUpdated')) {
@@ -248,15 +261,27 @@ function App() {
             ) : (
               <Transactions
                 transactionView={transactionView}
-                bucketTransactions={bucketTransactions}
-                accountTransactions={accountTransactions}
+                transactions={bucketTransactions}
                 currency={currency}
                 dateFormat={dateFormat}
               />
             )}
           </Tab>
           <Tab eventKey="accounts" title="Accounts">
-            <Accounts accounts={accounts} currency={currency} />
+            {!transactionView || !transactionView[0] === 'account' ? (
+              <Accounts
+                accounts={accounts}
+                setTransactionView={setTransactionView}
+                currency={currency}
+              />
+            ) : (
+              <Transactions
+                transactionView={transactionView}
+                transactions={accountTransactions}
+                currency={currency}
+                dateFormat={dateFormat}
+              />
+            )}
           </Tab>
         </Tabs>
         <div className="footer">

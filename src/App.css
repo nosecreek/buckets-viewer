@@ -6,10 +6,14 @@
   }
 }
 
-td:nth-child(2) {
+.accordion-body td:nth-child(2) {
   width: 33%;
   min-width: 33%;
   max-width: 50%;
+}
+
+td:nth-child(2) {
+  max-width: 50vw;
 }
 
 .footer p {
@@ -22,4 +26,8 @@ td:nth-child(2) {
 
 .accordion-body td {
   cursor: pointer;
+}
+
+h3 {
+  padding-top: .25em;
 }

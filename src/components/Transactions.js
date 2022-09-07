@@ -2,19 +2,20 @@ import { Table } from 'react-bootstrap'
 
 const Transactions = ({
   transactionView,
-  bucketTransactions,
-  accountTransactions,
+  transactions,
   currency,
   dateFormat
 }) => {
-  const transactions =
-    transactionView[0] === 'bucket'
-      ? bucketTransactions.filter((t) => t[1] === transactionView[1]).reverse()
-      : accountTransactions
+  const filteredTransactions = transactions
+    .filter((t) => t[1] === transactionView[1])
+    .reverse()
 
   return (
     <div>
       <h3>{transactionView[2]}</h3>
+      <p>
+        <strong>Balance: {currency.format(transactionView[3] / 100.0)}</strong>
+      </p>
       <Table striped hover bordered>
         <tbody>
           <tr>
@@ -23,7 +24,7 @@ const Transactions = ({
             <th>Amount</th>
           </tr>
 
-          {transactions.map((transaction) => (
+          {filteredTransactions.map((transaction) => (
             <tr key={transaction[0]}>
               <td>
                 {new Date(transaction[2]).toLocaleDateString(
