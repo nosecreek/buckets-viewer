@@ -46,7 +46,7 @@ const Transactions = ({
           {filteredTransactions.map((transaction) => (
             <tr key={transaction[0]}>
               <td>
-                {new Date(transaction[2]).toLocaleDateString(
+                {new Date(transaction[2].split(' ')[0]).toLocaleDateString(
                   undefined,
                   dateFormat
                 )}
