@@ -31,3 +31,11 @@ td:nth-child(2) {
 h3 {
   padding-top: .25em;
 }
+
+button.back {
+  text-decoration: underline;
+  border: 0;
+  background: none;
+  padding: 0;
+  color: #0a58ca;
+}

@@ -2,6 +2,7 @@ import { Table } from 'react-bootstrap'
 
 const Transactions = ({
   transactionView,
+  setTransactionView,
   transactions,
   currency,
   dateFormat
@@ -23,7 +24,16 @@ const Transactions = ({
     <div>
       <h3>{transactionView[2]}</h3>
       <p>
-        <strong>Balance: {currency.format(transactionView[3] / 100.0)}</strong>
+        <strong>Balance: {currency.format(transactionView[3] / 100.0)}</strong>{' '}
+        |{' '}
+        <button
+          className="back"
+          onClick={() => {
+            setTransactionView(null)
+          }}
+        >
+          Go Back
+        </button>
       </p>
       <Table striped hover bordered>
         <tbody>

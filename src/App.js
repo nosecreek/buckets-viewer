@@ -261,6 +261,7 @@ function App() {
             ) : (
               <Transactions
                 transactionView={transactionView}
+                setTransactionView={setTransactionView}
                 transactions={bucketTransactions}
                 currency={currency}
                 dateFormat={dateFormat}
@@ -277,6 +278,7 @@ function App() {
             ) : (
               <Transactions
                 transactionView={transactionView}
+                setTransactionView={setTransactionView}
                 transactions={accountTransactions}
                 currency={currency}
                 dateFormat={dateFormat}
