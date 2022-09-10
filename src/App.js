@@ -219,7 +219,22 @@ function App() {
         style={{ height: '100vh', textAlign: 'center' }}
         className="d-flex align-items-center justify-content-center"
       >
-        Loading {downloadProgress}%
+        <div>
+          <p>Loading {downloadProgress}%</p>
+          <p>
+            Progress bar stuck?{' '}
+            <button
+              onClick={() => {
+                localStorage.clear()
+                setFileId(null)
+              }}
+              class="link"
+            >
+              Click here
+            </button>{' '}
+            to start over.
+          </p>
+        </div>
       </div>
     )
   }

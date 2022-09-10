@@ -40,3 +40,11 @@ button.back {
   padding: 0;
   color: #0a58ca;
 }
+
+button.link {
+  border: 0;
+  background: none;
+  text-decoration: underline;
+  color: #0a58ca;
+  padding: 0;
+}
