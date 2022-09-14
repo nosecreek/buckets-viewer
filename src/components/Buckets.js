@@ -7,8 +7,8 @@ const Buckets = ({ buckets, bucketCats, setTransactionView, currency }) => {
         return (
           <Accordion.Item eventKey={i} key={i}>
             <Accordion.Header>
-              {bucketCats.values[cat[0] - 1]
-                ? bucketCats.values[cat[0] - 1][1]
+              {bucketCats.values.find((c) => c[0] === cat[0])
+                ? bucketCats.values.find((c) => c[0] === cat[0])[1]
                 : 'Misc'}
             </Accordion.Header>
             <Accordion.Body>
