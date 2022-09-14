@@ -14,3 +14,7 @@ including the balances of your Buckets and Accounts.
 If you don't use Budget with Buckets but would like to test the app, you can add the provided
 [Sample.buckets](https://github.com/nosecreek/buckets-viewer/raw/b5900b688e19f8726f90c71fce17340b846fa7d8/Sample.buckets)
 file to your Google Drive.
+
+![buckets-screenshot-1](https://user-images.githubusercontent.com/1271847/190226485-e1936d52-a260-485a-abed-4c292444c72e.png)
+
+![buckets-screenshot-2](https://user-images.githubusercontent.com/1271847/190226580-4cb84423-4730-4edb-9e70-4eaa7905e878.png)
