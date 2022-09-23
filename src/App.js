@@ -7,7 +7,7 @@ import Buckets from './components/Buckets'
 import Reload from './components/Reload'
 import Transactions from './components/Transactions'
 import { Container, Tab, Tabs, Navbar, Button, Alert } from 'react-bootstrap'
-import { Bucket, FileEarmarkText } from 'react-bootstrap-icons'
+import { Bucket, FileEarmarkText, Google } from 'react-bootstrap-icons'
 import './App.css'
 import useDropboxChooser from './hooks/useDropboxChooser'
 
@@ -247,13 +247,15 @@ function App() {
             <Button
               size="lg"
               variant="danger"
+              className="googleButton"
               onClick={() => handleOpenPicker()}
             >
-              Google Drive
-            </Button>{' '}
+              <Google /> Google Drive
+            </Button>
             <Button
               size="lg"
               variant="primary"
+              className="dropboxButton"
               onClick={() => handleOpenDropboxChooser()}
             >
               Dropbox
@@ -261,8 +263,8 @@ function App() {
             <br />
             <br />
             <p>
-              Welcome to Buckets Viewer. Use the button to select your .buckets
-              file from Google Drive.
+              Welcome to Buckets Viewer. Use one of the buttons above to select
+              your .buckets file.
             </p>
           </div>
         </div>
@@ -305,7 +307,12 @@ function App() {
             Buckets Viewer
           </Navbar.Brand>
           <div style={{ textAlign: 'right' }}>
-            <Reload accessToken={reloadToken} setAccessToken={setReloadToken} fileId={fileId} setDropboxID={setDropboxID} />{' '}
+            <Reload
+              accessToken={reloadToken}
+              setAccessToken={setReloadToken}
+              fileId={fileId}
+              setDropboxID={setDropboxID}
+            />{' '}
             <Button
               variant="light"
               onClick={() => {

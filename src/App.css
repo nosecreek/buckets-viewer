@@ -48,3 +48,7 @@ button.link {
   color: #0a58ca;
   padding: 0;
 }
+
+.googleButton {
+  margin-right: .5em;
+}
