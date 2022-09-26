@@ -1,7 +1,7 @@
 import { ArrowClockwise } from 'react-bootstrap-icons'
 import { Button } from 'react-bootstrap'
 
-const Reload = ({ accessToken, setAccessToken, fileId, setDropboxID }) => {
+const Reload = ({ setAccessToken, provider, setLoadDropbox }) => {
   const loadScript = (src) =>
     new Promise((resolve, reject) => {
       if (document.querySelector(`script[src="${src}"]`)) return resolve()
@@ -13,8 +13,8 @@ const Reload = ({ accessToken, setAccessToken, fileId, setDropboxID }) => {
     })
 
   const handleReload = () => {
-    if (fileId[0] === 'h') {
-      setDropboxID(1)
+    if (provider === 'Dropbox') {
+      setLoadDropbox(true)
     } else {
       loadScript('https://accounts.google.com/gsi/client').then(() => {
         const google = window.google

@@ -7,9 +7,10 @@ import Buckets from './components/Buckets'
 import Reload from './components/Reload'
 import Transactions from './components/Transactions'
 import { Container, Tab, Tabs, Navbar, Button, Alert } from 'react-bootstrap'
-import { Bucket, FileEarmarkText, Google } from 'react-bootstrap-icons'
+import { Bucket, FileEarmarkText } from 'react-bootstrap-icons'
 import './App.css'
-import useDropboxChooser from './hooks/useDropboxChooser'
+import GoogleButton from './components/GoogleButton'
+import DropboxButton from './components/DropboxButton'
 
 function App() {
   const [db, setDb] = useState(null)
@@ -27,58 +28,14 @@ function App() {
   const [reloadToken, setReloadToken] = useState(null)
   const [downloadProgress, setDownloadProgress] = useState(0)
   const [error, setError] = useState(null)
-  const [dropboxID, setDropboxID] = useState(null)
-  useDropboxChooser(process.env.REACT_APP_DROPBOX_KEY)
+  const [provider, setProvider] = useState(null)
+  const [loadDropbox, setLoadDropbox] = useState(false)
 
   const currency = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD'
   })
   const dateFormat = { year: 'numeric', month: 'long', day: 'numeric' }
-
-  // Use Google Drive Picker
-  const handleOpenPicker = () => {
-    openPicker({
-      clientId: process.env.REACT_APP_CLIENT_ID,
-      developerKey: process.env.REACT_APP_DEVELOPER_KEY,
-      viewId: 'DOCS',
-      // token: localStorage.getItem('auth') || null, // pass oauth token in case you already have one
-      showUploadView: false,
-      showUploadFolders: false,
-      supportDrives: true,
-      multiselect: true,
-      viewMimeTypes: 'application/octet-stream',
-      viewQuery: '*.buckets',
-      customScopes: ['https://www.googleapis.com/auth/drive.file'],
-      callbackFunction: (data) => {
-        if (data.action === 'cancel') {
-          console.log('User clicked cancel/close button')
-        }
-        if (data.action === 'picked') {
-          setFileSize(data.docs[0].sizeBytes)
-          setFileId(data.docs[0].id)
-          localStorage.setItem('fileId', data.docs[0].id)
-        }
-      }
-    })
-  }
-
-  // Use Dropbox Chooser
-  const handleOpenDropboxChooser = () => {
-    window.Dropbox.choose({
-      extensions: ['.buckets'],
-      linkType: 'direct',
-      success: function (data) {
-        if (data) {
-          console.log(data)
-          setFileSize(data[0].bytes)
-          setFileId(data[0].link)
-          localStorage.setItem('fileId', data[0].link)
-          setDropboxID(true)
-        }
-      }
-    })
-  }
 
   //If we have an auth token, load the DB from Google Drive
   useEffect(() => {
@@ -114,6 +71,7 @@ function App() {
           setError(e.message)
           setFileId(null)
           setBuckets(null)
+          setProvider(null)
           localStorage.clear()
         })
       localStorage.setItem('fileId', fileId)
@@ -137,18 +95,22 @@ function App() {
         setError(e.message)
         setFileId(null)
         setBuckets(null)
+        setProvider(null)
+        setLoadDropbox(false)
         localStorage.clear()
       })
 
+      setLoadDropbox(false)
       await loadDB(response)
     }
 
-    if ((authResponse || reloadToken) && fileId) {
+    if (provider === 'Google' && (authResponse || reloadToken) && fileId) {
       getGoogleDriveFile()
-    } else if (dropboxID && fileId) {
+    } else if (provider === 'Dropbox' && loadDropbox && fileId) {
+      console.log('loading dropbox file')
       getDropboxFile()
     }
-  }, [authResponse, reloadToken, fileId, fileSize, dropboxID])
+  }, [authResponse, reloadToken, fileId, fileSize, loadDropbox, provider])
 
   //DB Queries - Saved to Local Storage and State
   useEffect(() => {
@@ -233,6 +195,9 @@ function App() {
     if (localStorage.getItem('fileId')) {
       setFileId(localStorage.getItem('fileId'))
     }
+    if (localStorage.getItem('provider')) {
+      setProvider(localStorage.getItem('provider'))
+    }
   }, [])
 
   if (!fileId || error) {
@@ -244,22 +209,18 @@ function App() {
           className="d-flex align-items-center justify-content-center"
         >
           <div style={{ textAlign: 'center' }}>
-            <Button
-              size="lg"
-              variant="danger"
-              className="googleButton"
-              onClick={() => handleOpenPicker()}
-            >
-              <Google /> Google Drive
-            </Button>
-            <Button
-              size="lg"
-              variant="primary"
-              className="dropboxButton"
-              onClick={() => handleOpenDropboxChooser()}
-            >
-              Dropbox
-            </Button>
+            <GoogleButton
+              openPicker={openPicker}
+              setFileSize={setFileSize}
+              setFileId={setFileId}
+              setProvider={setProvider}
+            />
+            <DropboxButton
+              setFileSize={setFileSize}
+              setFileId={setFileId}
+              setProvider={setProvider}
+              setLoadDropbox={setLoadDropbox}
+            />
             <br />
             <br />
             <p>
@@ -311,7 +272,8 @@ function App() {
               accessToken={reloadToken}
               setAccessToken={setReloadToken}
               fileId={fileId}
-              setDropboxID={setDropboxID}
+              provider={provider}
+              setLoadDropbox={setLoadDropbox}
             />{' '}
             <Button
               variant="light"
@@ -319,6 +281,7 @@ function App() {
                 setFileId(null)
                 setBuckets(null)
                 setReloadToken(null)
+                setProvider(null)
               }}
             >
               <FileEarmarkText /> Select New File
