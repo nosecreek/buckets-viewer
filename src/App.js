@@ -9,6 +9,8 @@ import Transactions from './components/Transactions'
 import { Container, Tab, Tabs, Navbar, Button, Alert } from 'react-bootstrap'
 import { Bucket, FileEarmarkText } from 'react-bootstrap-icons'
 import './App.css'
+import GoogleButton from './components/GoogleButton'
+import DropboxButton from './components/DropboxButton'
 
 function App() {
   const [db, setDb] = useState(null)
@@ -26,6 +28,8 @@ function App() {
   const [reloadToken, setReloadToken] = useState(null)
   const [downloadProgress, setDownloadProgress] = useState(0)
   const [error, setError] = useState(null)
+  const [provider, setProvider] = useState(null)
+  const [loadDropbox, setLoadDropbox] = useState(false)
 
   const currency = new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -33,72 +37,80 @@ function App() {
   })
   const dateFormat = { year: 'numeric', month: 'long', day: 'numeric' }
 
-  // Use Google Drive Picker
-  const handleOpenPicker = () => {
-    openPicker({
-      clientId: process.env.REACT_APP_CLIENT_ID,
-      developerKey: process.env.REACT_APP_DEVELOPER_KEY,
-      viewId: 'DOCS',
-      // token: localStorage.getItem('auth') || null, // pass oauth token in case you already have one
-      showUploadView: false,
-      showUploadFolders: false,
-      supportDrives: true,
-      multiselect: true,
-      viewMimeTypes: 'application/octet-stream',
-      viewQuery: '*.buckets',
-      customScopes: ['https://www.googleapis.com/auth/drive.file'],
-      callbackFunction: (data) => {
-        if (data.action === 'cancel') {
-          console.log('User clicked cancel/close button')
-        }
-        if (data.action === 'picked') {
-          setFileSize(data.docs[0].sizeBytes)
-          setFileId(data.docs[0].id)
-          localStorage.setItem('fileId', data.docs[0].id)
-        }
-      }
-    })
-  }
-
   //If we have an auth token, load the DB from Google Drive
   useEffect(() => {
-    if ((authResponse || reloadToken) && fileId) {
+    const loadDB = async (response) => {
+      const uInt8Array = new Uint8Array(response.data)
+      const SQL = await initSqlJs({
+        locateFile: (file) => `https://sql.js.org/dist/${file}`
+      })
+      setDb(new SQL.Database(uInt8Array))
+    }
+
+    const getGoogleDriveFile = async () => {
       setError(null)
       const token = authResponse ? authResponse.access_token : reloadToken
-      const getFile = async () => {
-        const config = {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/x-sqlite3'
-          },
-          responseType: 'arraybuffer',
-          onDownloadProgress: (progressEvent) => {
-            setDownloadProgress(
-              Math.floor((progressEvent.loaded / fileSize) * 100)
-            )
-          }
-        }
-        const response = await axios
-          .get(
-            `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media&supportsAllDrives=true`,
-            config
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/x-sqlite3'
+        },
+        responseType: 'arraybuffer',
+        onDownloadProgress: (progressEvent) => {
+          setDownloadProgress(
+            Math.floor((progressEvent.loaded / fileSize) * 100)
           )
-          .catch((e) => {
-            setError(e.message)
-            setFileId(null)
-            setBuckets(null)
-            localStorage.clear()
-          })
-        const uInt8Array = new Uint8Array(response.data)
-        const SQL = await initSqlJs({
-          locateFile: (file) => `https://sql.js.org/dist/${file}`
-        })
-        setDb(new SQL.Database(uInt8Array))
+        }
       }
+      const response = await axios
+        .get(
+          `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media&supportsAllDrives=true`,
+          config
+        )
+        .catch((e) => {
+          setError(e.message)
+          setFileId(null)
+          setBuckets(null)
+          setProvider(null)
+          localStorage.clear()
+        })
       localStorage.setItem('fileId', fileId)
-      getFile()
+      await loadDB(response)
     }
-  }, [authResponse, reloadToken, fileId, fileSize])
+
+    const getDropboxFile = async () => {
+      setError(null)
+      const config = {
+        headers: {
+          'Content-Type': 'application/x-sqlite3'
+        },
+        responseType: 'arraybuffer',
+        onDownloadProgress: (progressEvent) => {
+          setDownloadProgress(
+            Math.floor((progressEvent.loaded / fileSize) * 100)
+          )
+        }
+      }
+      const response = await axios.get(`${fileId}`, config).catch((e) => {
+        setError(e.message)
+        setFileId(null)
+        setBuckets(null)
+        setProvider(null)
+        setLoadDropbox(false)
+        localStorage.clear()
+      })
+
+      setLoadDropbox(false)
+      await loadDB(response)
+    }
+
+    if (provider === 'Google' && (authResponse || reloadToken) && fileId) {
+      getGoogleDriveFile()
+    } else if (provider === 'Dropbox' && loadDropbox && fileId) {
+      console.log('loading dropbox file')
+      getDropboxFile()
+    }
+  }, [authResponse, reloadToken, fileId, fileSize, loadDropbox, provider])
 
   //DB Queries - Saved to Local Storage and State
   useEffect(() => {
@@ -183,6 +195,9 @@ function App() {
     if (localStorage.getItem('fileId')) {
       setFileId(localStorage.getItem('fileId'))
     }
+    if (localStorage.getItem('provider')) {
+      setProvider(localStorage.getItem('provider'))
+    }
   }, [])
 
   if (!fileId || error) {
@@ -194,18 +209,23 @@ function App() {
           className="d-flex align-items-center justify-content-center"
         >
           <div style={{ textAlign: 'center' }}>
-            <Button
-              size="lg"
-              variant="primary"
-              onClick={() => handleOpenPicker()}
-            >
-              Select Budget
-            </Button>
+            <GoogleButton
+              openPicker={openPicker}
+              setFileSize={setFileSize}
+              setFileId={setFileId}
+              setProvider={setProvider}
+            />
+            <DropboxButton
+              setFileSize={setFileSize}
+              setFileId={setFileId}
+              setProvider={setProvider}
+              setLoadDropbox={setLoadDropbox}
+            />
             <br />
             <br />
             <p>
-              Welcome to Buckets Viewer. Use the button to select your .buckets
-              file from Google Drive.
+              Welcome to Buckets Viewer. Use one of the buttons above to select
+              your .buckets file.
             </p>
           </div>
         </div>
@@ -228,7 +248,7 @@ function App() {
                 localStorage.clear()
                 setFileId(null)
               }}
-              class="link"
+              className="link"
             >
               Click here
             </button>{' '}
@@ -248,8 +268,22 @@ function App() {
             Buckets Viewer
           </Navbar.Brand>
           <div style={{ textAlign: 'right' }}>
-            <Reload accessToken={reloadToken} setAccessToken={setReloadToken} />{' '}
-            <Button variant="light" onClick={() => handleOpenPicker()}>
+            <Reload
+              accessToken={reloadToken}
+              setAccessToken={setReloadToken}
+              fileId={fileId}
+              provider={provider}
+              setLoadDropbox={setLoadDropbox}
+            />{' '}
+            <Button
+              variant="light"
+              onClick={() => {
+                setFileId(null)
+                setBuckets(null)
+                setReloadToken(null)
+                setProvider(null)
+              }}
+            >
               <FileEarmarkText /> Select New File
             </Button>
           </div>

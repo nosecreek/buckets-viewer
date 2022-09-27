@@ -48,3 +48,12 @@ button.link {
   color: #0a58ca;
   padding: 0;
 }
+
+.googleButton {
+  margin-right: .5em;
+}
+
+.dropboxButton svg, .googleButton svg {
+  position: relative;
+  top: -2px;
+}
