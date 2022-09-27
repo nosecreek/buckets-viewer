@@ -52,3 +52,8 @@ button.link {
 .googleButton {
   margin-right: .5em;
 }
+
+.dropboxButton svg, .googleButton svg {
+  position: relative;
+  top: -2px;
+}
