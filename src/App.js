@@ -197,6 +197,8 @@ function App() {
     }
     if (localStorage.getItem('provider')) {
       setProvider(localStorage.getItem('provider'))
+    } else if (localStorage.getItem('buckets')) {
+      setProvider('Google') // users may have loaded a file from Google before Dropbox was supported
     }
   }, [])
 
