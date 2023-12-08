@@ -42,7 +42,8 @@ function App() {
     const loadDB = async (response) => {
       const uInt8Array = new Uint8Array(response.data)
       const SQL = await initSqlJs({
-        locateFile: (file) => `https://sql.js.org/dist/${file}`
+        locateFile: (file) =>
+          `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/${file}`
       })
       setDb(new SQL.Database(uInt8Array))
     }
